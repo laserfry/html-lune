@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LuneKami – Moon Lab</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000;--fg:#e0e1dd;--accent:#0ff;--alt:#f0f;
+    --grid:clamp(10rem,50vw,25rem);
+  }
+  *{box-sizing:border-box;margin:0}
+  body{font-family:"Major Mono Display",monospace;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;min-height:100vh}
+  header,footer{padding:1.5rem;text-align:center;background:#0d1b2a}
+  a{color:var(--accent);text-decoration:none}
+  main{flex:1;display:grid;place-items:center;padding:2rem}
+  .lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--grid),1fr));gap:2rem;width:100%}
+  section{border:2px solid var(--accent);padding:1rem;position:relative}
+  h2{color:var(--alt);font-size:1.2rem;margin-bottom:.8rem}
+  /* — star canvas overlay — */
+  canvas#stars{position:fixed;inset:0;z-index:-1}
+  /* dialog */
+  dialog{border:2px solid var(--alt);background:#111;color:var(--fg);padding:1rem;width:80%}
+  dialog::backdrop{background:#0009}
+  button{padding:.4rem .8rem;border:2px solid var(--alt);background:transparent;color:var(--alt);cursor:pointer}
+  button:hover{background:var(--alt);color:#000}
+</style>
+</head>
+<body>
+<header><a href="index.html">← LuneKami Home</a> | <span style="color:var(--alt)">Moon Lab</span></header>
+
+<canvas id="stars"></canvas>
+
+<main>
+  <div class="lab-grid">
+    
+    <!-- SVG animation -->
+    <section>
+      <h2>SVG Orbit</h2>
+      <svg viewBox="-60 -60 120 120" width="100%" >
+        <circle r="50" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+        <circle id="moon" r="5" fill="var(--alt)">
+          <animateMotion dur="8s" repeatCount="indefinite" path="M50 0 A50 50 0 1 1 -50 0 A50 50 0 1 1 50 0"/>
+        </circle>
+      </svg>
+    </section>
+
+    <!-- Accordion -->
+    <section>
+      <h2>Moon FAQ</h2>
+      <details>
+        <summary>Why does the moon glow?</summary>
+        <p>It reflects sunlight—no secret LEDs (yet).</p>
+      </details>
+      <details>
+        <summary>Can you hear sounds on the moon?</summary>
+        <p>No air, no vibes—pure silence.</p>
+      </details>
+    </section>
+
+    <!-- Dialog demo -->
+    <section>
+      <h2>Modal Hack</h2>
+      <button id="open">Open Portal</button>
+      <dialog id="portal">
+        <p>Hello from the dark side 🌑</p>
+        <button id="close">Close</button>
+      </dialog>
+    </section>
+
+    <!-- Audio -->
+    <section>
+      <h2>Lunar Lo‑fi</h2>
+      <audio controls preload="none">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_841766fdd4.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+        Your browser can’t play the track.
+      </audio>
+    </section>
+
+  </div>
+</main>
+
+<footer>© <span id="y"></span> LuneKami • Made with raw HTML superpowers</footer>
+
+<script>
+/* -- footer year -- */
+document.getElementById('y').textContent=new Date().getFullYear();
+
+/* -- starfield canvas -- */
+const cvs=document.getElementById('stars'),ctx=cvs.getContext('2d');
+let w,h,stars=[];
+function resize(){w=cvs.width=innerWidth;h=cvs.height=innerHeight;stars=[...Array(200)].map(()=>({x:Math.random()*w,y:Math.random()*h,z:Math.random()*1}))}
+function draw(){ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);stars.forEach(s=>{s.y+=0.2+s.z*0.8;if(s.y>h)s.y=0;s.x+=0.05;ctx.fillStyle='hsla(180,100%,80%,'+s.z+')';ctx.fillRect(s.x,s.y,2,2)});requestAnimationFrame(draw)}
+addEventListener('resize',resize);resize();draw();
+
+/* -- dialog -- */
+const dlg=document.getElementById('portal');
+document.getElementById('open').onclick=()=>dlg.showModal();
+document.getElementById('close').onclick=()=>dlg.close();
+</script>
+</body>
+</html>
